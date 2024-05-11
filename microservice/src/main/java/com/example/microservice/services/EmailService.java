@@ -3,7 +3,6 @@ package com.example.microservice.services;
 import com.example.microservice.dtos.NotificationRequestDTO;
 import com.example.microservice.entities.Email;
 import com.example.microservice.repositories.EmailRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.validation.Valid;
@@ -15,69 +14,38 @@ import org.springframework.messaging.MessagingException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 
 @Service
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender emailSender;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
+    private final JavaMailSender javaMailSender;
+    private final ObjectMapper objectMapper;
     private final EmailRepository emailRepository;
 
     @Autowired
-    public EmailService(EmailRepository emailRepository) {
+    public EmailService(JavaMailSender javaMailSender, ObjectMapper objectMapper, EmailRepository emailRepository) {
+        this.javaMailSender = javaMailSender;
+        this.objectMapper = objectMapper;
         this.emailRepository = emailRepository;
-    }
-
-    public class EmailTemplateLoader {
-        public String loadTemplate(String filePath) {
-            try {
-                return new String(Files.readAllBytes(Paths.get(filePath)));
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
     }
 
     public void sendEmail(@Valid NotificationRequestDTO notificationRequestDTO) {
         try {
-            // Convert EmailRequestDto to JSON string
             String jsonPayload = objectMapper.writeValueAsString(notificationRequestDTO);
-
-            // Create MimeMessage
-            MimeMessage message = emailSender.createMimeMessage();
+            MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-            // Set email properties
-            helper.setFrom("matisoana06@gmail.com", "Carturesti");
+            helper.setFrom("matisoana06@gmail.com", "Cărturești");
             helper.setTo(notificationRequestDTO.getEmail());
             helper.setSubject(notificationRequestDTO.getSubject());
-            EmailTemplateLoader loader = new EmailTemplateLoader();
-            String htmlTemplate = null;
-            try {
-                htmlTemplate = StreamUtils.copyToString(
-                        new ClassPathResource("templates/email.html").getInputStream(),
-                        StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                // Handle file loading exception
-                e.printStackTrace();
-            }
+
+            String htmlTemplate = loadResourceAsString();
             String modifiedHtmlContent = htmlTemplate.replace("$BODY_CONTENT$", notificationRequestDTO.getBody());
-            helper.setText(modifiedHtmlContent, true); // true indicates HTML content
+            helper.setText(modifiedHtmlContent, true);
 
-            // Send email
-            emailSender.send(message);
+            javaMailSender.send(message);
 
-            // Save the email entity with status "SENT" initially
             Email emailEntity = new Email();
             emailEntity.setSubject(notificationRequestDTO.getSubject());
             emailEntity.setName(notificationRequestDTO.getName());
@@ -85,11 +53,16 @@ public class EmailService {
             emailEntity.setEmail(notificationRequestDTO.getEmail());
             emailRepository.save(emailEntity);
 
-        } catch (JsonProcessingException | MessagingException | UnsupportedEncodingException |
-                 jakarta.mail.MessagingException e) {
-            // Handle exception
+        } catch (MessagingException | IOException e) {
             e.printStackTrace();
+        } catch (jakarta.mail.MessagingException e) {
+            throw new RuntimeException(e);
         }
     }
-}
 
+    private String loadResourceAsString() throws IOException {
+        return StreamUtils.copyToString(
+                new ClassPathResource("templates/email.html").getInputStream(),
+                StandardCharsets.UTF_8);
+    }
+}

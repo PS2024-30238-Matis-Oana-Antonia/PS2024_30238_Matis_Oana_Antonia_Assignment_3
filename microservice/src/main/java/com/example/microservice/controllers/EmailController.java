@@ -10,42 +10,48 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
-@RequestMapping("/email")
+@RequestMapping("/notification")
 @AllArgsConstructor
 public class EmailController {
-    public static final String FIRST_TOKEN = "9d7b1f62-28e3-4a15-9c98-3ec9f8e723f1";
-    public static final String SECOND_TOKEN = "7f9da720-5148-4b47-9eb7-69e3ae11d8af";
 
-    //token = 9d7b1f62-28e3-4a15-9c98-3ec9f8e723f17f9da720-5148-4b47-9eb7-69e3ae11d8af
+    private static final String FIRST_TOKEN = "e2a0c9b8-5f11-4b84-a1d2-6f3f12e89e3d";
+    private static final String SECOND_TOKEN = "3c7e45a3-86c7-42e7-89c1-5d79fc8957af";
+    public static final String authToken = FIRST_TOKEN + SECOND_TOKEN;
+
     private final EmailService emailService;
 
-    @PostMapping("/sendEmail")
+    @PostMapping("/email")
     public ResponseEntity<MessageDTO> sendEmail(
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody NotificationRequestDTO notificationRequestDTO,
             BindingResult bindingResult) {
 
-        MessageDTO messageDto = new MessageDTO();
-
-        if(!isTokenValid(token)){
-            messageDto.setContent("Invalid authorization token");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(messageDto);
+        if (Objects.isNull(notificationRequestDTO)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageDTO("Invalid request body"));
         }
 
-        if(bindingResult.hasErrors()){
-            messageDto.setContent(bindingResult.getFieldError().getDefaultMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messageDto);
+        if (!validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageDTO("Invalid authorization token"));
+        }
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageDTO(bindingResult.getFieldError().getDefaultMessage()));
         }
 
         emailService.sendEmail(notificationRequestDTO);
-        messageDto.setContent("Email successfully sent!");
-        return ResponseEntity.status(HttpStatus.OK).body(messageDto);
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageDTO("Email successfully sent!"));
     }
 
-    private boolean isTokenValid(String token){
+    private boolean validateToken(String token) {
+        String[] tokenParts = token.split(" ");
+        if (tokenParts.length != 2) {
+            return false;
+        }
+        String concatenatedToken = tokenParts[1];
         String validToken = FIRST_TOKEN + SECOND_TOKEN;
-        String t = token.substring(7);  //proba POSTMAN
-        return validToken.equals(t);
+        return validToken.equals(concatenatedToken);
     }
 }

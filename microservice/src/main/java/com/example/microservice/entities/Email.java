@@ -12,7 +12,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table (name = "emails")
+@Table (name = "email")
 @Data
 public class Email {
     @Id

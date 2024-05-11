@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Template</title>
     <style>
-        /* CSS styling for the email */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f9e8f4; /* Light pink background */
@@ -14,23 +13,30 @@
             text-align: center;
         }
         .email-header {
-            margin-bottom: 20px; /* Add a bit of bottom margin */
+            position: relative; /* Positioning context for child elements */
+            margin-bottom: 20px;
+
         }
         .email-header img {
             max-width: 100%;
             height: auto;
             margin: 0 auto; /* Center the image */
             display: block; /* Make the image a block element */
+            position: relative; /* Position relative for absolute positioning */
         }
         .email-content {
-            background-color: #f9e8f4; /* White background for content */
+            position: absolute; /* Position absolute */
+            top: 50%; /* Move to the middle vertically */
+            left: 50%; /* Move to the middle horizontally */
+            transform: translate(-50%, -50%); /* Center the content */
+            background-color: #e6f3e4; /* Light green background */
             border-radius: 8px;
             padding: 20px; /* Add padding to content */
-            margin: 0 auto; /* Center content */
-            max-width: 600px; /* Limit content width */
+            width: 90%; /* Make it as wide as the page */
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
             text-align: left; /* Align text to the left */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Apply font to email content */
+            font-family: Arial, Helvetica, sans-serif; /* Apply font to email content */
+            font-size: 15px;
         }
 
         h1 {
@@ -43,15 +49,20 @@
             color: #555555; /* Light gray text color */
             margin-bottom: 10px; /* Add bottom margin to paragraphs */
         }
+        .book-icon {
+            width: 30px; /* Icon width */
+            height: auto; /* Maintain aspect ratio */
+            margin-right: 10px; /* Add spacing between icon and text */
+            vertical-align: middle; /* Align icon vertically with text */
+        }
     </style>
 </head>
 <body>
-<div class="email-header" >
-    <img src="https://images.wallpaperscraft.com/image/single/books_flowers_rope_208998_2560x1600.jpg" alt="Header Image">
-</div>
-<div class="email-content" >
-    <!-- Aici se va insera conținutul dinamic generat în Java -->
-    $BODY_CONTENT$
+<div class="email-header">
+    <img src="https://clipart-library.com/2023/8.-Our-books.png" alt="Header Image">
+    <div class="email-content">
+        $BODY_CONTENT$
+    </div>
 </div>
 </body>
 </html>

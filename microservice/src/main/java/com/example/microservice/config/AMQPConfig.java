@@ -14,7 +14,7 @@ public class AMQPConfig {
 
     @Bean
     public Queue emailQueue() {
-        return new Queue("email-queue", false); // Non-durable, non-exclusive, non-auto-delete queue
+        return new Queue("queue-for-email", false);
     }
 
     @Bean

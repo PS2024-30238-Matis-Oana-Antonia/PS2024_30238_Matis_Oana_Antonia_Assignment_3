@@ -13,16 +13,14 @@ public class QueueListener {
     private EmailService emailService;
 
     @Autowired
-    private ObjectMapper objectMapper; // Inject ObjectMapper for JSON serialization/deserialization
-
-    @RabbitListener(queues = "email-queue")
-    public void processEmailRequest(String in) { // Receive message as a String
+    private ObjectMapper objectMapper;
+    @RabbitListener(queues = "queue-for-email")
+    public void processEmailRequest(String in) {
         try {
             NotificationRequestDTO notificationRequestDTO = objectMapper.readValue(in, NotificationRequestDTO.class);
             System.out.println(notificationRequestDTO);
             emailService.sendEmail(notificationRequestDTO);
         } catch (Exception e) {
-            // Handle any exceptions
             e.printStackTrace();
         }
     }
