@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Template</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9e8f4; /* Light pink background */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+            text-align: center;
+        }
+        .email-header {
+            position: relative; /* Positioning context for child elements */
+            margin-bottom: 20px;
+
+        }
+        .email-header img {
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto; /* Center the image */
+            display: block; /* Make the image a block element */
+            position: relative; /* Position relative for absolute positioning */
+        }
+        .email-content {
+            position: absolute; /* Position absolute */
+            top: 50%; /* Move to the middle vertically */
+            left: 50%; /* Move to the middle horizontally */
+            transform: translate(-50%, -50%); /* Center the content */
+            background-color: #e6f3e4; /* Light green background */
+            border-radius: 8px;
+            padding: 20px; /* Add padding to content */
+            width: 90%; /* Make it as wide as the page */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+            text-align: left; /* Align text to the left */
+            font-family: Arial, Helvetica, sans-serif; /* Apply font to email content */
+            font-size: 15px;
+        }
+
+        h1 {
+            font-size: 28px; /* Larger font size for headings */
+            color: #333333; /* Dark gray text color */
+            margin-bottom: 20px; /* Add bottom margin to headings */
+        }
+        p {
+            font-size: 18px; /* Larger font size for paragraphs */
+            color: #555555; /* Light gray text color */
+            margin-bottom: 10px; /* Add bottom margin to paragraphs */
+        }
+        .book-icon {
+            width: 30px; /* Icon width */
+            height: auto; /* Maintain aspect ratio */
+            margin-right: 10px; /* Add spacing between icon and text */
+            vertical-align: middle; /* Align icon vertically with text */
+        }
+    </style>
+</head>
+<body>
+<div class="email-header">
+    <img src="https://clipart-library.com/2023/8.-Our-books.png" alt="Header Image">
+    <div class="email-content">
+        $BODY_CONTENT$
+    </div>
+</div>
+</body>
+</html>
